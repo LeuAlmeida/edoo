@@ -28,8 +28,8 @@
 
 ## Funcionalidades avançadas
 
-* [ ] Paginação e ordenação em `GET /benefits`
-* [ ] Adicionar documentação Swagger (`swagger-jsdoc`, `swagger-ui-express`)
+* [X] Paginação e ordenação em `GET /benefits`
+* [X] Adicionar documentação Swagger (`swagger-jsdoc`, `swagger-ui-express`)
 * [ ] Adicionar métricas com `prom-client`
 
 ## Containerização e Deploy

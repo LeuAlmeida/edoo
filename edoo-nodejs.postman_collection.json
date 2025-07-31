@@ -14,34 +14,109 @@
 				"url": {
 					"raw": "http://localhost:3000/health",
 					"protocol": "http",
-					"host": [
-						"localhost"
-					],
+					"host": ["localhost"],
 					"port": "3000",
-					"path": [
-						"health"
-					]
+					"path": ["health"]
 				},
 				"description": "Check if the API is running"
 			}
 		},
 		{
-			"name": "List All Benefits",
+			"name": "List All Benefits (Default)",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
 					"raw": "http://localhost:3000/benefits",
 					"protocol": "http",
-					"host": [
-						"localhost"
-					],
+					"host": ["localhost"],
 					"port": "3000",
-					"path": [
-						"benefits"
+					"path": ["benefits"]
+				},
+				"description": "Retrieve all benefits with default pagination (page 1, limit 10)"
+			}
+		},
+		{
+			"name": "List Benefits (With Pagination)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/benefits?page=1&limit=5",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["benefits"],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "5"
+						}
 					]
 				},
-				"description": "Retrieve all benefits from the system"
+				"description": "Retrieve benefits with custom pagination (page 1, limit 5)"
+			}
+		},
+		{
+			"name": "List Benefits (With Sorting)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/benefits?sortBy=name&sortOrder=ASC",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["benefits"],
+					"query": [
+						{
+							"key": "sortBy",
+							"value": "name"
+						},
+						{
+							"key": "sortOrder",
+							"value": "ASC"
+						}
+					]
+				},
+				"description": "Retrieve benefits sorted by name in ascending order"
+			}
+		},
+		{
+			"name": "List Benefits (Full Options)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/benefits?page=1&limit=5&sortBy=name&sortOrder=DESC",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "3000",
+					"path": ["benefits"],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "sortBy",
+							"value": "name"
+						},
+						{
+							"key": "sortOrder",
+							"value": "DESC"
+						}
+					]
+				},
+				"description": "Retrieve benefits with pagination and sorting"
 			}
 		},
 		{
@@ -61,13 +136,9 @@
 				"url": {
 					"raw": "http://localhost:3000/benefits",
 					"protocol": "http",
-					"host": [
-						"localhost"
-					],
+					"host": ["localhost"],
 					"port": "3000",
-					"path": [
-						"benefits"
-					]
+					"path": ["benefits"]
 				},
 				"description": "Create a new benefit"
 			}
@@ -80,15 +151,9 @@
 				"url": {
 					"raw": "http://localhost:3000/benefits/1/deactivate",
 					"protocol": "http",
-					"host": [
-						"localhost"
-					],
+					"host": ["localhost"],
 					"port": "3000",
-					"path": [
-						"benefits",
-						"1",
-						"deactivate"
-					]
+					"path": ["benefits", "1", "deactivate"]
 				},
 				"description": "Deactivate a specific benefit"
 			}
@@ -101,15 +166,9 @@
 				"url": {
 					"raw": "http://localhost:3000/benefits/1/activate",
 					"protocol": "http",
-					"host": [
-						"localhost"
-					],
+					"host": ["localhost"],
 					"port": "3000",
-					"path": [
-						"benefits",
-						"1",
-						"activate"
-					]
+					"path": ["benefits", "1", "activate"]
 				},
 				"description": "Activate a specific benefit"
 			}
@@ -122,14 +181,9 @@
 				"url": {
 					"raw": "http://localhost:3000/benefits/1",
 					"protocol": "http",
-					"host": [
-						"localhost"
-					],
+					"host": ["localhost"],
 					"port": "3000",
-					"path": [
-						"benefits",
-						"1"
-					]
+					"path": ["benefits", "1"]
 				},
 				"description": "Delete a specific benefit"
 			}
@@ -140,18 +194,14 @@
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
-				"exec": [
-					""
-				]
+				"exec": [""]
 			}
 		},
 		{
 			"listen": "test",
 			"script": {
 				"type": "text/javascript",
-				"exec": [
-					""
-				]
+				"exec": [""]
 			}
 		}
 	],

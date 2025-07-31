@@ -61,17 +61,94 @@ const options: swaggerJsdoc.Options = {
       '/benefits': {
         get: {
           tags: ['Benefits'],
-          summary: 'List all benefits',
+          summary: 'List all benefits with pagination and sorting',
+          parameters: [
+            {
+              in: 'query',
+              name: 'page',
+              schema: {
+                type: 'integer',
+                minimum: 1,
+                default: 1
+              },
+              description: 'Page number'
+            },
+            {
+              in: 'query',
+              name: 'limit',
+              schema: {
+                type: 'integer',
+                minimum: 1,
+                maximum: 100,
+                default: 10
+              },
+              description: 'Number of items per page'
+            },
+            {
+              in: 'query',
+              name: 'sortBy',
+              schema: {
+                type: 'string',
+                enum: ['id', 'name', 'description', 'isActive', 'createdAt', 'updatedAt']
+              },
+              description: 'Field to sort by'
+            },
+            {
+              in: 'query',
+              name: 'sortOrder',
+              schema: {
+                type: 'string',
+                enum: ['ASC', 'DESC'],
+                default: 'ASC'
+              },
+              description: 'Sort order (ascending or descending)'
+            }
+          ],
           responses: {
             200: {
-              description: 'List of all benefits',
+              description: 'List of benefits with pagination info',
               content: {
                 'application/json': {
                   schema: {
-                    type: 'array',
-                    items: {
-                      $ref: '#/components/schemas/Benefit'
+                    type: 'object',
+                    properties: {
+                      items: {
+                        type: 'array',
+                        items: {
+                          $ref: '#/components/schemas/Benefit'
+                        }
+                      },
+                      total: {
+                        type: 'integer',
+                        description: 'Total number of items',
+                        example: 50
+                      },
+                      page: {
+                        type: 'integer',
+                        description: 'Current page number',
+                        example: 1
+                      },
+                      limit: {
+                        type: 'integer',
+                        description: 'Number of items per page',
+                        example: 10
+                      },
+                      totalPages: {
+                        type: 'integer',
+                        description: 'Total number of pages',
+                        example: 5
+                      }
                     }
+                  }
+                }
+              }
+            },
+            400: {
+              description: 'Invalid parameters',
+              content: {
+                'application/json': {
+                  schema: {
+                    $ref: '#/components/schemas/Error'
                   }
                 }
               }

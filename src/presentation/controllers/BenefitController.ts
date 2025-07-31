@@ -1,16 +1,49 @@
 import { Request, Response } from 'express';
 import { IBenefitRepository } from '../../domain/repositories/IBenefitRepository';
 import { Benefit } from '../../domain/entities/Benefit';
+import { ValidationFailedError } from '../../infrastructure/repositories/BenefitRepository';
 
 export class BenefitController {
   constructor(private readonly benefitRepository: IBenefitRepository) {}
 
-  public listBenefits = async (_req: Request, res: Response): Promise<void> => {
+  public listBenefits = async (req: Request, res: Response): Promise<void> => {
     try {
-      const benefits = await this.benefitRepository.findAll();
-      res.json(benefits);
+      const pageStr = req.query.page as string;
+      const limitStr = req.query.limit as string;
+      const sortBy = req.query.sortBy as string;
+      const sortOrder = (req.query.sortOrder as string || 'ASC').toUpperCase() as 'ASC' | 'DESC';
+
+      const page = pageStr ? parseInt(pageStr) : 1;
+      if (isNaN(page) || page < 1) {
+        res.status(400).json({ error: 'Page must be greater than 0' });
+        return;
+      }
+
+      const limit = limitStr ? parseInt(limitStr) : 10;
+      if (isNaN(limit) || limit < 1 || limit > 100) {
+        res.status(400).json({ error: 'Limit must be between 1 and 100' });
+        return;
+      }
+
+      if (sortOrder !== 'ASC' && sortOrder !== 'DESC') {
+        res.status(400).json({ error: 'Sort order must be ASC or DESC' });
+        return;
+      }
+
+      const result = await this.benefitRepository.findAll({
+        page,
+        limit,
+        sortBy,
+        sortOrder
+      });
+
+      res.json(result);
     } catch (error) {
-      res.status(500).json({ error: 'Internal server error' });
+      if (error instanceof ValidationFailedError) {
+        res.status(400).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: 'Internal server error' });
+      }
     }
   };
 
@@ -26,7 +59,7 @@ export class BenefitController {
       res.status(201).json(createdBenefit);
     } catch (error) {
       if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error: 'Validation error' });
       } else {
         res.status(500).json({ error: 'Internal server error' });
       }

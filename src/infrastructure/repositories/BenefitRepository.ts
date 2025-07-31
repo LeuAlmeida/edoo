@@ -1,7 +1,7 @@
-import { IBenefitRepository } from '../../domain/repositories/IBenefitRepository';
+import { IBenefitRepository, PaginationOptions, PaginatedResult } from '../../domain/repositories/IBenefitRepository';
 import { IBenefit, Benefit } from '../../domain/entities/Benefit';
 import BenefitModel from '../database/models/Benefit';
-import { ValidationError } from 'sequelize';
+import { ValidationError, Order } from 'sequelize';
 
 export class ValidationFailedError extends Error {
   constructor(message: string) {
@@ -10,10 +10,38 @@ export class ValidationFailedError extends Error {
   }
 }
 
+const VALID_SORT_FIELDS = ['id', 'name', 'description', 'isActive', 'createdAt', 'updatedAt'];
+
 export class BenefitRepository implements IBenefitRepository {
-  async findAll(): Promise<IBenefit[]> {
-    const benefits = await BenefitModel.findAll();
-    return benefits.map(benefit => new Benefit(benefit.get({ plain: true })));
+  async findAll(options?: PaginationOptions): Promise<PaginatedResult<IBenefit>> {
+    const page = options?.page || 1;
+    const limit = options?.limit || 10;
+    const offset = (page - 1) * limit;
+
+    let order: Order = [['id', 'ASC']];
+    if (options?.sortBy) {
+      const sortField = options.sortBy.toLowerCase();
+      if (!VALID_SORT_FIELDS.includes(sortField)) {
+        throw new ValidationFailedError(`Invalid sort field. Valid fields are: ${VALID_SORT_FIELDS.join(', ')}`);
+      }
+      order = [[sortField, options.sortOrder || 'ASC']];
+    }
+
+    const { count, rows } = await BenefitModel.findAndCountAll({
+      limit,
+      offset,
+      order
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    return {
+      items: rows.map(benefit => new Benefit(benefit.get({ plain: true }))),
+      total: count,
+      page,
+      limit,
+      totalPages
+    };
   }
 
   async findById(id: number): Promise<IBenefit | null> {
