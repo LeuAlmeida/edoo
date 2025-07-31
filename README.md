@@ -1,74 +1,129 @@
-# Benefits Management API
+# Desafio: API de Gerenciamento de Benefícios (Node.js)
 
-A simple REST API for managing benefits built with Node.js, Express, and SQLite.
+## 1. Introdução
 
-## Features
+O objetivo deste desafio é criar uma **API REST** utilizando **Node.js com Express.js** que permita gerenciar benefícios. A aplicação deve ser simples, mas funcional, com endpoints que possibilitem:
 
-- Create, list, activate, deactivate, and delete benefits
-- SQLite database for data persistence
-- Clean Architecture implementation
-- Input validation
-- Error handling
-- TypeScript support
+* Criar
+* Listar
+* Ativar
+* Desativar
+* Excluir benefícios
 
-## Requirements
+Utilize um banco de dados em memória (ex.: SQLite ou NeDB) para facilitar os testes e **implemente testes automatizados** para validar o funcionamento dos endpoints.
 
-- Node.js (v14 or higher)
-- npm or yarn
+---
 
-## Installation
+## 2. Configuração Inicial
 
-1. Clone the repository
-2. Install dependencies:
-```bash
-yarn install
-```
-3. Create a `.env` file in the root directory with the following content:
-```
-PORT=3000
-NODE_ENV=development
-```
+### Dependências sugeridas:
 
-## Running the Application
+* `express` – Para criar a API REST.
+* `sequelize` – Para abstração de banco (caso use SQLite).
+* `sqlite3` ou `nedb` – Banco de dados simples em memória.
+* `dotenv` – Para configuração de variáveis de ambiente.
 
-Development mode:
-```bash
-yarn dev
-```
+---
 
-Build and run in production:
-```bash
-yarn build
-yarn start
-```
+## 3. Modelo: `Benefit`
 
-## API Endpoints
+A entidade **Benefit** deve conter:
 
-- `GET /api/benefits` - List all benefits
-- `POST /api/benefits` - Create a new benefit
-- `PUT /api/benefits/:id/activate` - Activate a benefit
-- `PUT /api/benefits/:id/deactivate` - Deactivate a benefit
-- `DELETE /api/benefits/:id` - Delete a benefit
+* `id` (`Number`): Identificador único (auto incremento).
+* `name` (`String`): Nome do benefício (**obrigatório**).
+* `description` (`String`): Descrição opcional do benefício.
+* `isActive` (`Boolean`): Indica se o benefício está ativo (default: `true`).
 
-### Request Body Example (POST /api/benefits)
+---
+
+## 4. Rotas da API
+
+### 1. `GET /benefits`
+
+* **Objetivo:** Listar todos os benefícios cadastrados.
+* **Resposta:** JSON com array de benefícios.
+
+---
+
+### 2. `POST /benefits`
+
+* **Objetivo:** Adicionar um novo benefício.
+* **Entrada:**
 
 ```json
 {
-  "name": "Health Insurance",
-  "description": "Complete coverage for employees"
+  "name": "Plano de Saúde",
+  "description": "Cobertura completa"
 }
 ```
 
-## Validation Rules
+* **Resposta:** Benefício criado com `id`.
 
-- `name`: Required, 3-100 characters
-- `description`: Optional, max 255 characters
-- `isActive`: Boolean, defaults to true
+---
 
-## Error Handling
+### 3. `PUT /benefits/:id/deactivate`
 
-The API returns appropriate HTTP status codes and error messages:
+* **Objetivo:** Marcar um benefício como **inativo**.
+* **Resposta:** Objeto atualizado com `isActive = false`.
 
-- `400` - Validation errors
-- `404` - Resource not found
-- `500` - Internal server error
+---
+
+### 4. `PUT /benefits/:id/activate`
+
+* **Objetivo:** Marcar um benefício como **ativo novamente**.
+* **Resposta:** Objeto atualizado com `isActive = true`.
+
+---
+
+### 5. `DELETE /benefits/:id`
+
+* **Objetivo:** Remover um benefício do sistema.
+* **Resposta:** HTTP 204 (No Content).
+
+---
+
+## 5. Regras e Validações
+
+### `name`
+
+* Não pode ser nulo ou vazio.
+* Deve ter entre **3 e 100 caracteres**.
+
+### `description`
+
+* Máximo **255 caracteres**.
+
+### Respostas:
+
+* Retornar **HTTP 400 (Bad Request)** quando as validações falharem.
+
+---
+
+## 6. Testes Automatizados
+
+Crie testes que verifiquem:
+
+* ✅ Listagem de benefícios
+* ✅ Criação **válida e inválida**
+* ✅ Ativação e desativação
+* ✅ Exclusão de benefício
+* ✅ Cenários de erro:
+
+  * ID inexistente
+  * Payload inválido
+
+---
+
+## 7. Extensões (Opcional)
+
+* [ ] Adicionar **paginação e ordenação** no `GET /benefits`.
+* [ ] Adicionar **Swagger** para documentação da API.
+* [ ] Incluir **métricas básicas** (ex.: usando `prom-client`).
+* [ ] **Containerizar** a aplicação com **Docker**.
+* [ ] Criar um pipeline `.yaml` que rode no **Azure DevOps** com CI/CD:
+
+  * Instale o serviço containerizado em um **Cloud Run** do **GCP**.
+
+---
+
+Se quiser, posso converter isso em um arquivo `.md` ou gerar o template do projeto também.
