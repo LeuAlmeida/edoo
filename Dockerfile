@@ -1,33 +1,64 @@
-FROM node:20.11.1 as build
+# Build stage
+FROM node:20.11.1-slim as builder
 
-RUN apt-get update && apt-get -y upgrade && apt-get autoremove
-RUN apt-get install -y dumb-init --no-install-recommends
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app/edoo-nodejs
+WORKDIR /app
 
-COPY ./src src
-COPY package.json \
-  yarn.lock \
-  tsconfig.json \
-  ./
+# Copy package files
+COPY package.json yarn.lock ./
 
+# Install dependencies
 RUN yarn install --frozen-lockfile
-RUN yarn yarn-audit-fix --audit-level=moderate --force
+
+# Copy source code
+COPY . .
+
+# Build the application
 RUN yarn build
-RUN rm -rf node_modules
-RUN yarn install --production
 
-FROM node:20.11.1-bullseye-slim as production
+# Install production dependencies and rebuild sqlite3
+RUN yarn install --production --ignore-scripts --prefer-offline \
+    && cd node_modules/sqlite3 \
+    && yarn run install --build-from-source
 
-WORKDIR /app/edoo-nodejs-production
+# Production stage
+FROM node:20.11.1-slim
 
-COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
+# Install dumb-init and curl for healthcheck
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    dumb-init \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-USER node
-COPY --from=build --chown=node:node /app/edoo-nodejs/node_modules ./node_modules
-COPY --from=build --chown=node:node /app/edoo-nodejs/dist ./dist
+WORKDIR /app
 
-EXPOSE 80
+# Copy built assets from builder stage
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
 
+# Create non-root user and switch to it
+RUN useradd -r -u 1001 -g root nodejs
+USER nodejs
+
+# Set environment variables
 ENV NODE_ENV=production
-CMD ["dumb-init", "node", "./dist/index.js"]
+ENV PORT=3000
+
+# Expose the application port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/health || exit 1
+
+# Use dumb-init as entrypoint
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application
+CMD ["node", "dist/index.js"]

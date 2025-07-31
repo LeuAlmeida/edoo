@@ -1,5 +1,5 @@
 import { sequelize } from '../database/config';
-import { BenefitRepository } from './BenefitRepository';
+import { BenefitRepository, ValidationFailedError } from './BenefitRepository';
 import { IBenefit } from '../../domain/entities/Benefit';
 
 describe('BenefitRepository', () => {
@@ -37,12 +37,18 @@ describe('BenefitRepository', () => {
       expect(benefit.isActive).toBe(true);
     });
 
-    it('should throw error when name is invalid', async () => {
+    it('should throw ValidationFailedError when name is invalid', async () => {
       await expect(repository.create({
         name: 'ab',
         description: 'Invalid name test',
         isActive: true
-      })).rejects.toThrow();
+      })).rejects.toThrow(ValidationFailedError);
+
+      await expect(repository.create({
+        name: 'ab',
+        description: 'Invalid name test',
+        isActive: true
+      })).rejects.toThrow('Validation len on name failed');
     });
   });
 
@@ -99,6 +105,13 @@ describe('BenefitRepository', () => {
     it('should return null when updating non-existent benefit', async () => {
       const result = await repository.update(999, { name: 'Test' });
       expect(result).toBeNull();
+    });
+
+    it('should throw ValidationFailedError when update data is invalid', async () => {
+      const benefit = await createValidBenefit();
+      await expect(repository.update(benefit.id!, {
+        name: 'ab' // nome muito curto
+      })).rejects.toThrow(ValidationFailedError);
     });
   });
 

@@ -13,6 +13,13 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+app.get('/health', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.use('/', benefitRouter);
 
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
@@ -23,7 +30,6 @@ app.use((err: Error, _req: express.Request, res: express.Response, _next: expres
 export const startServer = async (): Promise<void> => {
   try {
     await initializeDatabase();
-
     const port = process.env.PORT || 3000;
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);

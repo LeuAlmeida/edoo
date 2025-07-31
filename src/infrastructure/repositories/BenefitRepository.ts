@@ -1,6 +1,14 @@
 import { IBenefitRepository } from '../../domain/repositories/IBenefitRepository';
 import { IBenefit, Benefit } from '../../domain/entities/Benefit';
 import BenefitModel from '../database/models/Benefit';
+import { ValidationError } from 'sequelize';
+
+export class ValidationFailedError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationFailedError';
+  }
+}
 
 export class BenefitRepository implements IBenefitRepository {
   async findAll(): Promise<IBenefit[]> {
@@ -23,9 +31,9 @@ export class BenefitRepository implements IBenefitRepository {
 
       return new Benefit(benefit.get({ plain: true })).toJSON();
     } catch (error) {
-      console.error('Error creating benefit:', error);
-      if (error instanceof Error) {
-        throw new Error(`Failed to create benefit: ${error.message}`);
+      if (error instanceof ValidationError) {
+        const message = error.errors.map(err => err.message).join(', ');
+        throw new ValidationFailedError(message);
       }
       throw new Error('Failed to create benefit');
     }
@@ -42,9 +50,9 @@ export class BenefitRepository implements IBenefitRepository {
       await benefit.update(benefitData);
       return new Benefit(benefit.get({ plain: true })).toJSON();
     } catch (error) {
-      console.error('Error updating benefit:', error);
-      if (error instanceof Error) {
-        throw new Error(`Failed to update benefit: ${error.message}`);
+      if (error instanceof ValidationError) {
+        const message = error.errors.map(err => err.message).join(', ');
+        throw new ValidationFailedError(message);
       }
       throw new Error('Failed to update benefit');
     }
@@ -54,10 +62,6 @@ export class BenefitRepository implements IBenefitRepository {
     try {
       await BenefitModel.destroy({ where: { id } });
     } catch (error) {
-      console.error('Error deleting benefit:', error);
-      if (error instanceof Error) {
-        throw new Error(`Failed to delete benefit: ${error.message}`);
-      }
       throw new Error('Failed to delete benefit');
     }
   }

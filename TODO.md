@@ -1,10 +1,10 @@
 # To-Do List – API de Gerenciamento de Benefícios
 
-## Etapa 1: Setup e desenvolvimento do projeto
+## Setup e desenvolvimento do projeto
 [X] Finalizado
 ---
 
-## Etapa 4: Validações
+## Validações
 
 * [ ] Implementar validações:
   * `name`: obrigatório, 3 a 100 caracteres
@@ -13,7 +13,7 @@
 
 ---
 
-## Etapa 5: Testes Automatizados
+## Testes Automatizados
 
 * [ ] Testar `GET /benefits`
 * [ ] Testar criação válida (`POST /benefits`)
@@ -24,9 +24,9 @@
 
 ---
 
-## Etapa 6: Extensões Opcionais
+## Extensões Opcionais
 
-## Funcionalidades Avançadas
+## Funcionalidades avançadas
 
 * [ ] Paginação e ordenação em `GET /benefits`
 * [ ] Adicionar documentação Swagger (`swagger-jsdoc`, `swagger-ui-express`)
