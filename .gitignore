@@ -19,3 +19,5 @@ edoo-nodejs.postman_collection.json
 *.sqlite
 
 .env
+
+/coverage

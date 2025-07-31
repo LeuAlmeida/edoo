@@ -1,31 +1,50 @@
 import { Sequelize } from 'sequelize';
 import path from 'path';
 
-const dbPath = path.resolve(__dirname, '../../../database.sqlite');
+const getDbConfig = () => {
+  const env = process.env.NODE_ENV || 'development';
+
+  switch (env) {
+    case 'test':
+      return {
+        dialect: 'sqlite' as const,
+        storage: ':memory:',
+        logging: false,
+      };
+
+    case 'production':
+      return {
+        dialect: 'sqlite' as const,
+        storage: path.resolve(__dirname, '../../../database.sqlite'),
+        logging: false,
+      };
+
+    default: // development
+      return {
+        dialect: 'sqlite' as const,
+        storage: path.resolve(__dirname, '../../../database.sqlite'),
+        logging: console.log,
+      };
+  }
+};
 
 if (process.env.NODE_ENV === 'development') {
   const fs = require('fs');
+  const dbPath = path.resolve(__dirname, '../../../database.sqlite');
   if (fs.existsSync(dbPath)) {
     fs.unlinkSync(dbPath);
-    console.log('Existing database file deleted');
   }
 }
 
-export const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: dbPath,
-  logging: process.env.NODE_ENV === 'production' ? false : console.log,
-});
+export const sequelize = new Sequelize(getDbConfig());
 
 import '../database/models/Benefit';
 
 export const initializeDatabase = async (): Promise<void> => {
   try {
     await sequelize.authenticate();
-    console.log('Database connection established successfully.');
-
-    await sequelize.sync({ force: true });
-    console.log('Database synchronized successfully');
+    await sequelize.sync({ force: process.env.NODE_ENV === 'development' });
+    console.log('Database initialized successfully');
   } catch (error) {
     console.error('Unable to initialize database:', error);
     throw error;

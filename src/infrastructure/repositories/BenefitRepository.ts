@@ -52,10 +52,7 @@ export class BenefitRepository implements IBenefitRepository {
 
   async delete(id: number): Promise<void> {
     try {
-      const result = await BenefitModel.destroy({ where: { id } });
-      if (result === 0) {
-        throw new Error('Benefit not found');
-      }
+      await BenefitModel.destroy({ where: { id } });
     } catch (error) {
       console.error('Error deleting benefit:', error);
       if (error instanceof Error) {
