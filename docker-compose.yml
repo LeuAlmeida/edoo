@@ -1,0 +1,10 @@
+version: '1.0'
+
+services:
+  edoo-nodejs:
+    build: .
+    volumes:
+      - .:/home/node/app
+    container_name: edoo-nodejs
+    ports:
+      - 3000:3000
