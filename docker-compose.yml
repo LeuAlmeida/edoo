@@ -17,9 +17,13 @@ services:
       start_period: 5s
     restart: unless-stopped
     volumes:
-      - ./database.sqlite:/app/database.sqlite
+      - sqlite_data:/app/data
     networks:
       - benefits-network
+
+volumes:
+  sqlite_data:
+    driver: local
 
 networks:
   benefits-network:

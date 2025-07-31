@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "b0e3b3e3-5b5b-4b5b-8b5b-3b3b3b3b3b3b",
+		"name": "Edoo Node.js API",
+		"description": "Collection for testing the Edoo Node.js Exam API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"health"
+					]
+				},
+				"description": "Check if the API is running"
+			}
+		},
+		{
+			"name": "List All Benefits",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/benefits",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"benefits"
+					]
+				},
+				"description": "Retrieve all benefits from the system"
+			}
+		},
+		{
+			"name": "Create Benefit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Health Insurance\",\n    \"description\": \"Complete medical coverage for employees\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/benefits",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"benefits"
+					]
+				},
+				"description": "Create a new benefit"
+			}
+		},
+		{
+			"name": "Deactivate Benefit",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/benefits/1/deactivate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"benefits",
+						"1",
+						"deactivate"
+					]
+				},
+				"description": "Deactivate a specific benefit"
+			}
+		},
+		{
+			"name": "Activate Benefit",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/benefits/1/activate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"benefits",
+						"1",
+						"activate"
+					]
+				},
+				"description": "Activate a specific benefit"
+			}
+		},
+		{
+			"name": "Delete Benefit",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/benefits/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"benefits",
+						"1"
+					]
+				},
+				"description": "Delete a specific benefit"
+			}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}

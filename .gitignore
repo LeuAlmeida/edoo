@@ -15,7 +15,7 @@ yarn-error.log
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
-edoo-nodejs.postman_collection.json
+# edoo-nodejs.postman_collection.json
 *.sqlite
 
 .env

@@ -8,8 +8,8 @@ const benefitController = new BenefitController(benefitRepository);
 
 benefitRouter.get('/benefits', benefitController.listBenefits);
 benefitRouter.post('/benefits', benefitController.createBenefit);
-benefitRouter.patch('/benefits/:id/deactivate', benefitController.deactivateBenefit);
-benefitRouter.patch('/benefits/:id/activate', benefitController.activateBenefit);
+benefitRouter.put('/benefits/:id/deactivate', benefitController.deactivateBenefit);
+benefitRouter.put('/benefits/:id/activate', benefitController.activateBenefit);
 benefitRouter.delete('/benefits/:id', benefitController.deleteBenefit);
 
 export default benefitRouter;

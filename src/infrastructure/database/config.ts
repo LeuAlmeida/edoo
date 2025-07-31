@@ -15,7 +15,7 @@ const getDbConfig = () => {
     case 'production':
       return {
         dialect: 'sqlite' as const,
-        storage: path.resolve(__dirname, '../../../database.sqlite'),
+        storage: path.resolve('/app/data/database.sqlite'),
         logging: false,
       };
 
@@ -42,6 +42,15 @@ import '../database/models/Benefit';
 
 export const initializeDatabase = async (): Promise<void> => {
   try {
+    // Ensure data directory exists in production
+    if (process.env.NODE_ENV === 'production') {
+      const fs = require('fs');
+      const dataDir = '/app/data';
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+    }
+
     await sequelize.authenticate();
     await sequelize.sync({ force: process.env.NODE_ENV === 'development' });
     console.log('Database initialized successfully');

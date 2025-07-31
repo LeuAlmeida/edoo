@@ -38,13 +38,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
+# Create data directory and set permissions
+RUN mkdir -p /app/data && chown -R node:node /app
+
 # Copy built assets from builder stage
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 
-# Create non-root user and switch to it
-RUN useradd -r -u 1001 -g root nodejs
-USER nodejs
+# Switch to non-root user
+USER node
 
 # Set environment variables
 ENV NODE_ENV=production
