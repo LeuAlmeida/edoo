@@ -1,42 +1,33 @@
 {
-   "compilerOptions": {
-      "target": "ESNext",
-      "module": "commonjs",
-      "lib": ["ESNext"],
-      "allowJs": true,
-      "outDir": "./dist",
-      "rootDir": "./src",
-      "removeComments": true,
-      "typeRoots": ["./node_modules/@types", "./src/@types"],
-      "esModuleInterop": true,
-      "resolveJsonModule": true,
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-      "skipLibCheck": true,
-      "forceConsistentCasingInFileNames": true,
-      "baseUrl": ".",
-      "paths": {
-         "@controllers/*": ["./src/app/controllers/*"],
-         "@entities/*": ["./src/app/entities/*"],
-         "@lib/*": ["./src/lib/*"],
-         "@views/*": ["./src/app/views/*"],
-         "@config/*": ["./src/config/*"],
-         "@services/*": ["src/app/services/*"],
-         "@exceptions/*": ["src/app/exceptions/*"],
-         "@interfaces/*": ["./src/app/interfaces/*"],
-         "@enums/*": ["./src/app/enums/*"],
-         "@common/*": ["./src/app/common/*"],
-         "@constants/*": ["./src/app/constants/*"],
-         "@dao/*": ["src/app/DAO/*"],
-         "@factory/*": ["src/app/factory/*"],
-         "@schemas/*": ["./src/app/schemas/*"],
-         "@utils/*": ["./src/utils/*"],
-         "@middlewares/*": ["./src/app/middlewares/*"],
-         "@routes/*": ["./src/routes/*"],
-         "@helpers/*": ["./src/app/helpers/*"],
-         "@database/*": ["./src/database/*"]
-      }
-   },
-   "include": ["src/**/*"],
-   "exclude": ["node_modules", "**/*.spec.ts", "./knexfile.ts"]
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "lib": ["es6"],
+    "allowJs": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "removeComments": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/@types"
+    ],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "strict": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

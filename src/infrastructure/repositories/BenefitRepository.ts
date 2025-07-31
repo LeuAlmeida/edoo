@@ -23,11 +23,12 @@ export class BenefitRepository implements IBenefitRepository {
 
   async create(benefitData: IBenefit): Promise<IBenefit> {
     try {
+      const { name, description, isActive } = benefitData;
       const benefit = await BenefitModel.create({
-        name: benefitData.name,
-        description: benefitData.description,
-        isActive: benefitData.isActive ?? true
-      });
+        name,
+        description,
+        isActive: isActive ?? true
+      } as any);
 
       return new Benefit(benefit.get({ plain: true })).toJSON();
     } catch (error) {
