@@ -30,7 +30,7 @@
 
 * [X] Paginação e ordenação em `GET /benefits`
 * [X] Adicionar documentação Swagger (`swagger-jsdoc`, `swagger-ui-express`)
-* [ ] Adicionar métricas com `prom-client`
+* [X] Adicionar métricas com `prom-client`
 
 ## Containerização e Deploy
 
