@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { IBenefitRepository } from '../../domain/repositories/IBenefitRepository';
 import { Benefit } from '../../domain/entities/Benefit';
 import { ValidationFailedError } from '../../infrastructure/repositories/BenefitRepository';
+import { benefitOperations } from '../../infrastructure/metrics/config';
 
 export class BenefitController {
   constructor(private readonly benefitRepository: IBenefitRepository) {}
@@ -37,6 +38,7 @@ export class BenefitController {
         sortOrder
       });
 
+      benefitOperations.inc({ operation: 'list' });
       res.json(result);
     } catch (error) {
       if (error instanceof ValidationFailedError) {
@@ -56,6 +58,7 @@ export class BenefitController {
       });
 
       const createdBenefit = await this.benefitRepository.create(benefit);
+      benefitOperations.inc({ operation: 'create' });
       res.status(201).json(createdBenefit);
     } catch (error) {
       if (error instanceof Error) {
@@ -76,6 +79,7 @@ export class BenefitController {
         return;
       }
 
+      benefitOperations.inc({ operation: 'deactivate' });
       res.json(updatedBenefit);
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });
@@ -92,6 +96,7 @@ export class BenefitController {
         return;
       }
 
+      benefitOperations.inc({ operation: 'activate' });
       res.json(updatedBenefit);
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });
@@ -102,6 +107,7 @@ export class BenefitController {
     try {
       const id = Number(req.params.id);
       await this.benefitRepository.delete(id);
+      benefitOperations.inc({ operation: 'delete' });
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });
