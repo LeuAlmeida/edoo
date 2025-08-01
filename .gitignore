@@ -1,23 +1,40 @@
-node_modules
-dist
-tmp
-__tests__/coverage
-
-# lockfiles
-package-lock.json
-.yarn
-
-# errors
+# Dependencies
+node_modules/
 yarn-error.log
+yarn-debug.log
+npm-debug.log
 
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
+# Build
+dist/
+build/
+*.js.map
 
-# edoo.postman_collection.json
-*.sqlite
+# Test
+coverage/
+*.test.js
+*.spec.js
+jest.config.js
 
+# Environment
 .env
+.env.local
+.env.*.local
 
-/coverage
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs
+logs/
+*.log
