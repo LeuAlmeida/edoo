@@ -4,7 +4,7 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Edoo Node.js API',
+      title: 'Edoo API',
       version: '1.0.0',
       description: 'API for managing benefits',
       contact: {

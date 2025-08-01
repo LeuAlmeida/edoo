@@ -36,7 +36,7 @@ app.get('/metrics', async (_req, res) => {
 
 const options = {
    customCss: '.swagger-ui .topbar { display: none }',
-   customSiteTitle: 'Edoo Node.js API Documentation',
+   customSiteTitle: 'Edoo API Documentation',
 };
 
 // @ts-ignore - Ignoring type issues with swagger-ui-express

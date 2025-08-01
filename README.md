@@ -1,129 +1,148 @@
-# Desafio: API de Gerenciamento de Benefícios (Node.js)
+# Instruções de Execução
 
-## 1. Introdução
+Este documento descreve como executar a API de Benefícios usando Docker.
 
-O objetivo deste desafio é criar uma **API REST** utilizando **Node.js com Express.js** que permita gerenciar benefícios. A aplicação deve ser simples, mas funcional, com endpoints que possibilitem:
+## Pré-requisitos
 
-* Criar
-* Listar
-* Ativar
-* Desativar
-* Excluir benefícios
+- Docker
+- Docker Compose
+- Postman (para testes)
 
-Utilize um banco de dados em memória (ex.: SQLite ou NeDB) para facilitar os testes e **implemente testes automatizados** para validar o funcionamento dos endpoints.
+## Executando a API
 
----
+1. Clone o repositório
+2. Na raiz do projeto, execute:
+```bash
+docker-compose up -d
+```
 
-## 2. Configuração Inicial
+A API estará disponível em `http://localhost:3000`.
 
-### Dependências sugeridas:
+## Verificando o Status
 
-* `express` – Para criar a API REST.
-* `sequelize` – Para abstração de banco (caso use SQLite).
-* `sqlite3` ou `nedb` – Banco de dados simples em memória.
-* `dotenv` – Para configuração de variáveis de ambiente.
+Para verificar se a API está funcionando:
+```bash
+curl http://localhost:3000/health
+```
 
----
+## Documentação da API
 
-## 3. Modelo: `Benefit`
+A documentação completa da API está disponível através do Swagger UI:
 
-A entidade **Benefit** deve conter:
+```
+http://localhost:3000/api/v1/swagger
+```
 
-* `id` (`Number`): Identificador único (auto incremento).
-* `name` (`String`): Nome do benefício (**obrigatório**).
-* `description` (`String`): Descrição opcional do benefício.
-* `isActive` (`Boolean`): Indica se o benefício está ativo (default: `true`).
+O Swagger fornece uma interface interativa onde você pode:
+- Visualizar todos os endpoints disponíveis
+- Testar as requisições diretamente pelo navegador
+- Ver os modelos de dados e parâmetros aceitos
+- Entender as respostas e códigos de status
 
----
+## Métricas
 
-## 4. Rotas da API
+A API expõe métricas no formato Prometheus em:
 
-### 1. `GET /benefits`
+```
+http://localhost:3000/metrics
+```
 
-* **Objetivo:** Listar todos os benefícios cadastrados.
-* **Resposta:** JSON com array de benefícios.
+### Métricas Disponíveis
 
----
+1. **Métricas HTTP**:
+   - `http_request_duration_seconds`: Duração das requisições HTTP
+     - Labels: method, route, status_code
+     - Tipo: Histogram
 
-### 2. `POST /benefits`
+2. **Métricas de Negócio**:
+   - `benefit_operations_total`: Total de operações por tipo
+     - Labels: operation (list, create, activate, deactivate, delete)
+     - Tipo: Counter
 
-* **Objetivo:** Adicionar um novo benefício.
-* **Entrada:**
+3. **Métricas do Sistema**:
+   - Uso de CPU
+   - Uso de memória
+   - Métricas do Event Loop
+   - Métricas do Garbage Collector
+
+### Exemplo de Consulta Prometheus
+
+```promql
+# Taxa de requisições por minuto
+rate(http_request_duration_seconds_count[1m])
+
+# Total de benefícios criados
+benefit_operations_total{operation="create"}
+```
+
+## Testando a API
+
+### Usando Postman
+
+1. Importe o arquivo `edoo.postman_collection.json` no Postman
+2. A coleção contém todos os endpoints disponíveis:
+   - `GET /benefits` - Lista todos os benefícios (com paginação e ordenação)
+   - `POST /benefits` - Cria um novo benefício
+   - `PUT /benefits/:id/activate` - Ativa um benefício
+   - `PUT /benefits/:id/deactivate` - Desativa um benefício
+   - `DELETE /benefits/:id` - Remove um benefício
+
+### Parâmetros de Listagem
+
+O endpoint `GET /benefits` suporta os seguintes parâmetros de query:
+
+- `page` (opcional, padrão: 1): Número da página
+- `limit` (opcional, padrão: 10): Itens por página (máx: 100)
+- `sortBy` (opcional): Campo para ordenação
+  - Valores válidos: `id`, `name`, `description`, `isActive`, `createdAt`, `updatedAt`
+- `sortOrder` (opcional, padrão: ASC): Direção da ordenação
+  - Valores válidos: `ASC`, `DESC`
+
+Exemplos:
+```bash
+# Listagem padrão (primeira página, 10 itens)
+GET http://localhost:3000/benefits
+
+# Segunda página com 5 itens por página
+GET http://localhost:3000/benefits?page=2&limit=5
+
+# Ordenado por nome em ordem decrescente
+GET http://localhost:3000/benefits?sortBy=name&sortOrder=DESC
+
+# Combinando paginação e ordenação
+GET http://localhost:3000/benefits?page=1&limit=5&sortBy=name&sortOrder=DESC
+```
+
+### Exemplo de Criação de Benefício
 
 ```json
+POST http://localhost:3000/benefits
+Content-Type: application/json
+
 {
-  "name": "Plano de Saúde",
-  "description": "Cobertura completa"
+    "name": "Lorem ipsum",
+    "description": "Lorem ipsum dolor sit amet."
 }
 ```
 
-* **Resposta:** Benefício criado com `id`.
+### Respostas
 
----
+A API retorna os seguintes formatos de resposta:
 
-### 3. `PUT /benefits/:id/deactivate`
+#### Sucesso na Listagem
+```json
+{
+    "items": [...],
+    "total": 50,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 5
+}
+```
 
-* **Objetivo:** Marcar um benefício como **inativo**.
-* **Resposta:** Objeto atualizado com `isActive = false`.
-
----
-
-### 4. `PUT /benefits/:id/activate`
-
-* **Objetivo:** Marcar um benefício como **ativo novamente**.
-* **Resposta:** Objeto atualizado com `isActive = true`.
-
----
-
-### 5. `DELETE /benefits/:id`
-
-* **Objetivo:** Remover um benefício do sistema.
-* **Resposta:** HTTP 204 (No Content).
-
----
-
-## 5. Regras e Validações
-
-### `name`
-
-* Não pode ser nulo ou vazio.
-* Deve ter entre **3 e 100 caracteres**.
-
-### `description`
-
-* Máximo **255 caracteres**.
-
-### Respostas:
-
-* Retornar **HTTP 400 (Bad Request)** quando as validações falharem.
-
----
-
-## 6. Testes Automatizados
-
-Crie testes que verifiquem:
-
-* ✅ Listagem de benefícios
-* ✅ Criação **válida e inválida**
-* ✅ Ativação e desativação
-* ✅ Exclusão de benefício
-* ✅ Cenários de erro:
-
-  * ID inexistente
-  * Payload inválido
-
----
-
-## 7. Extensões (Opcional)
-
-* [ ] Adicionar **paginação e ordenação** no `GET /benefits`.
-* [ ] Adicionar **Swagger** para documentação da API.
-* [ ] Incluir **métricas básicas** (ex.: usando `prom-client`).
-* [ ] **Containerizar** a aplicação com **Docker**.
-* [ ] Criar um pipeline `.yaml` que rode no **Azure DevOps** com CI/CD:
-
-  * Instale o serviço containerizado em um **Cloud Run** do **GCP**.
-
----
-
-Se quiser, posso converter isso em um arquivo `.md` ou gerar o template do projeto também.
+#### Erro de Validação
+```json
+{
+    "error": "Mensagem de erro específica"
+}
+```

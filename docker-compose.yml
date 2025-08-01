@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: edoo-nodejs
+    container_name: edoo
     ports:
       - "3000:3000"
     volumes:
